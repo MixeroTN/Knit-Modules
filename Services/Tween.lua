@@ -2,10 +2,10 @@
 .______     ______     _______.
 |   _  \   /      |   /       |
 |  |_)  | |  ,----'  |   (----`
-|   ___/  |  |        \   \    
-|  |      |  `----.----)   |   
-| _|       \______|_______/    
-                              
+|   ___/  |  |        \   \
+|  |      |  `----.----)   |
+| _|       \______|_______/
+
 
 -- // This script manages tweens
 
@@ -23,7 +23,7 @@ local packages = replicatedStorage:WaitForChild("Packages")
 -- // Loaded Modules \\ --
 
 local knit = require(packages:WaitForChild("Knit"))
-local promise = require(packages.Promise)
+local promise = require(packages:WaitForChild("Promise"))
 
 -- // Knit Setup \\ --
 
@@ -34,8 +34,10 @@ local tween = knit.CreateService{
 
 -- // Private Functions \\ --
 
-local function cancelAllTweens()
-    return promise.new(function(resolve)
+local function cancelAllTweens(): () -> table
+    -- // This function cancels every active tween
+
+    return promise.new(function(resolve): ()
         for _, element in ipairs(tween.ActiveTweens) do
             element:Cancel()
         end
@@ -46,8 +48,10 @@ end
 
 -- // Public Functions \\ --
 
-function tween:GetActiveTweens()
-    return promise.new(function(resolve, _, onCancel)
+function tween:GetActiveTweens(): () -> table
+    -- // This function collects every active tween
+
+    return promise.new(function(resolve, _, onCancel): ()
         if onCancel() then
             promise.delay():andThenCall(cancelAllTweens)
             return onCancel(tween.ActiveTweens)
@@ -56,8 +60,10 @@ function tween:GetActiveTweens()
     end):catch(warn)
 end
 
-function tween:Tween(object: Instance, tweenInfo: TweenInfo, properties: table)
-    return promise.new(function(resolve, reject, onCancel)
+function tween:Tween(object: Instance, tweenInfo: TweenInfo, properties: table): () -> table
+    -- // Create a promise
+
+    return promise.new(function(resolve, reject, onCancel): ()
         if not object or not tweenInfo or not properties then
             return reject(object, tweenInfo, properties)
         end
@@ -68,6 +74,8 @@ function tween:Tween(object: Instance, tweenInfo: TweenInfo, properties: table)
         if onCancel(function() currentTween:Cancel() end) then
             return onCancel(currentTween)
         end
+
+        -- // Play the tween
 
         currentTween.Completed:Once(resolve)
         currentTween:Play()
