@@ -1,3 +1,5 @@
+--!nocheck
+
 --[[
 .______     ______     _______.
 |   _  \   /      |   /       |
@@ -27,59 +29,76 @@ local promise = require(packages:WaitForChild("Promise"))
 
 -- // Knit Setup \\ --
 
-local tween = knit.CreateController{
-    Name = "Tween",
-    ActiveTweens = {}
+local tween = knit.CreateController({
+	Name = "Tween",
+	ActiveTweens = {},
+})
+
+-- // Types \\ --
+
+type PromiseStatus = {
+	Started: "Started",
+	Resolved: "Resolved",
+	Rejected: "Rejected",
+	Cancelled: "Cancelled",
 }
 
 -- // Private Functions \\ --
 
-local function cancelAllTweens(): () -> table
-    -- // This function cancels every active tween
+local function cancelAllTweens(): PromiseStatus
+	-- // This function cancels every active tween
 
-    return promise.new(function(resolve): ()
-        for _, element in ipairs(tween.ActiveTweens) do
-            element:Cancel()
-        end
-        tween.ActiveTweens = {}
-        return resolve()
-    end):catch(warn)
+	return promise
+		.new(function(resolve)
+			for _, element in ipairs(tween.ActiveTweens) do
+				element:Cancel()
+			end
+			tween.ActiveTweens = {}
+			return resolve()
+		end)
+		:catch(warn)
 end
 
 -- // Public Functions \\ --
 
-function tween:GetActiveTweens(): () -> table
-    -- // This function collects every active tween
+function tween:GetActiveTweens(): PromiseStatus
+	-- // This function collects every active tween
 
-    return promise.new(function(resolve, _, onCancel): ()
-        if onCancel() then
-            promise.delay():andThenCall(cancelAllTweens)
-            return onCancel(tween.ActiveTweens)
-        end
-        return resolve(tween.ActiveTweens)
-    end):catch(warn)
+	return promise
+		.new(function(resolve, _, onCancel)
+			if onCancel() then
+				promise.delay():andThenCall(cancelAllTweens)
+				return onCancel(tween.ActiveTweens)
+			end
+			return resolve(tween.ActiveTweens)
+		end)
+		:catch(warn)
 end
 
-function tween:Tween(object: Instance, tweenInfo: TweenInfo, properties: table): () -> table
-    -- // Create a promise
+function tween:Tween(object: Instance, tweenInfo: TweenInfo, properties: table): PromiseStatus
+	-- // Create a promise
 
-    return promise.new(function(resolve, reject, onCancel): ()
-        if not object or not tweenInfo or not properties then
-            return reject(object, tweenInfo, properties)
-        end
+	return promise
+		.new(function(resolve, reject, onCancel)
+			if not object or not tweenInfo or not properties then
+				return reject(object, tweenInfo, properties)
+			end
 
-        local currentTween = tweenService:Create(object, tweenInfo, properties)
-        table.insert(tween.ActiveTweens, currentTween)
+			local currentTween = tweenService:Create(object, tweenInfo, properties)
+			table.insert(tween.ActiveTweens, currentTween)
 
-        if onCancel(function() currentTween:Cancel() end) then
-            return onCancel(currentTween)
-        end
+			if onCancel(function()
+				currentTween:Cancel()
+			end) then
+				return onCancel(currentTween)
+			end
 
-        -- // Play the tween
+			-- // Play the tween
 
-        currentTween.Completed:Once(resolve)
-        currentTween:Play()
-    end):catch(warn)
+			currentTween.Completed:Once(resolve)
+			currentTween:Play()
+		end)
+		:catch(warn)
 end
 
 -- // Initialize \\ --
