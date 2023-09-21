@@ -43,6 +43,10 @@ type PromiseStatus = {
 	Cancelled: "Cancelled",
 }
 
+type PromiseStatusTable = {
+	[string]: PromiseStatus,
+}
+
 -- // Private Functions \\ --
 
 local function cancelAllTweens(): PromiseStatus
@@ -97,8 +101,20 @@ function tween:Tween(object: Instance, tweenInfo: TweenInfo, properties: table):
 
 			currentTween.Completed:Once(resolve)
 			currentTween:Play()
+
+			--return resolve(currentTween)
 		end)
 		:catch(warn)
+end
+
+function tween:TweenMultiple(objects: table, tweenInfo: TweenInfo, properties: table): PromiseStatusTable
+	local promiseStatusTable = {}
+
+	for _, object in next, objects do
+		table.insert(promiseStatusTable, self:Tween(object, tweenInfo, properties))
+	end
+
+	return promiseStatusTable
 end
 
 -- // Initialize \\ --
