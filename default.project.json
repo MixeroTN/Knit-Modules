@@ -1,0 +1,80 @@
+{
+  "name": "set-name",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedFirst": {
+      "Shared": {
+        "$path": "src/ReplicatedFirst"
+      }
+    },
+
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/ReplicatedStorage"
+      },
+      "Packages": {
+        "$path": "Packages"
+      }
+    },
+
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/ServerScriptService"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts"
+        }
+      },
+      "StarterCharacterScripts": {
+        "Client": {
+          "$path": "src/StarterPlayer/StarterCharacterScripts"
+        }
+      }
+    },
+
+    "StarterGui": {
+      "$properties": {
+        "ShowDevelopmentGui": true
+      }
+    },
+
+    "Workspace": {
+      "$properties": {
+        "FilteringEnabled": true
+      }
+    },
+
+    "Lighting": {
+      "$properties": {
+        "Ambient": [0.415, 0.364, 0.568],
+        "Brightness": 1.35,
+        "GlobalShadows": true,
+        "Technology": "ShadowMap",
+        "EnvironmentDiffuseScale": 0.32,
+        "EnvironmentSpecularScale": 0.15,
+        "OutdoorAmbient": [0.45, 0.152, 0],
+        "ShadowSoftness": 0.4,
+        "ClockTime": 14,
+        "GeographicLatitude": -15.751,
+        "ExposureCompensation": 0.19
+      }
+    },
+
+    "SoundService": {
+      "$properties": {
+        "RespectFilteringEnabled": true
+      }
+    },
+
+    "HttpService": {
+      "$properties": {
+        "HttpEnabled": true
+      }
+    }
+  }
+}

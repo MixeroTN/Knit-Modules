@@ -1,0 +1,15 @@
+[package]
+name = "owner/name"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+private = true
+
+[dependencies]
+Knit = "sleitnick/knit@^1.5.1"
+ProfileService = "jakebball/profileservice@^1.5.0"
+SignalsService = "sleitnick/signal@^1.5.0"
+ReplicaService = "remyxs/replicaservice@^1.0.2"
+Promise = "evaera/promise@^4.0.0"
+Cmdr = "mixerotn/cmdr@^1.12.6"
+CameraShaker = "miniyear/camerashaker@^1.0.2"
